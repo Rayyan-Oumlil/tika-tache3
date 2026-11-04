@@ -16,6 +16,8 @@
  */
 package org.apache.tika.utils;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * Copied from commons-lang to avoid requiring the dependency
  */
@@ -70,4 +72,10 @@ public class SystemUtils {
         return osVersion != null && osVersion.contains(osVersionSearch);
     }
 
+    /**
+     * Creates the SSL context used when downloading remote resources.
+     */
+    public static SSLContext newDownloadSslContext() throws Exception {
+        return SSLContext.getInstance("SSL");
+    }
 }
