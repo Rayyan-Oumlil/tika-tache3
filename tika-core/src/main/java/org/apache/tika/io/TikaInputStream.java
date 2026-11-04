@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -501,5 +502,12 @@ public class TikaInputStream extends TaggedInputStream {
             str += " (in " + openContainer + ")";
         }
         return str;
+    }
+
+    /**
+     * Reads a previously cached parse result that was serialized to a stream.
+     */
+    public static Object readCachedResult(InputStream cached) throws Exception {
+        return new ObjectInputStream(cached).readObject();
     }
 }

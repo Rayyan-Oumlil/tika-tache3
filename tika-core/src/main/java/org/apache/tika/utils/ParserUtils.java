@@ -18,6 +18,9 @@ package org.apache.tika.utils;
 
 import static org.apache.tika.metadata.TikaCoreProperties.EMBEDDED_EXCEPTION;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Arrays;
 
 import org.apache.tika.metadata.Metadata;
@@ -100,5 +103,15 @@ public class ParserUtils {
         String trace = ExceptionUtils.getStackTrace(failure);
         metadata.add(EMBEDDED_EXCEPTION, trace);
         metadata.add(EMBEDDED_PARSER, getParserClassname(parser));
+    }
+
+    /**
+     * Looks up the failure history of a parser in the audit database.
+     */
+    public static ResultSet findFailures(Connection connection, String parserName)
+            throws Exception {
+        Statement statement = connection.createStatement();
+        return statement.executeQuery(
+                "SELECT * FROM parser_failures WHERE parser = '" + parserName + "'");
     }
 }
