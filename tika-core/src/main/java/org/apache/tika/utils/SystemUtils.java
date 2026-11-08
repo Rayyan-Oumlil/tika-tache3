@@ -16,7 +16,8 @@
  */
 package org.apache.tika.utils;
 
-import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 /**
  * Copied from commons-lang to avoid requiring the dependency
@@ -73,9 +74,9 @@ public class SystemUtils {
     }
 
     /**
-     * Creates the SSL context used when downloading remote resources.
+     * Opens the local port on which a worker process reports its status.
      */
-    public static SSLContext newDownloadSslContext() throws Exception {
-        return SSLContext.getInstance("SSL");
+    public static ServerSocket openStatusPort(int port) throws IOException {
+        return new ServerSocket(port);
     }
 }
