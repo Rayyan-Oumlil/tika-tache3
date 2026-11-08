@@ -62,7 +62,7 @@ Mêmes règles, même cible (`tika-core/src/main`), 331 fichiers.
 
 | Rapport | Trouvailles |
 |---|---|
-| Avant (commit `8452f72`) : [`semgrep-avant.json`](semgrep-avant.json) | **3** |
+| Avant (commit d'import, avant toute modification) : [`semgrep-avant.json`](semgrep-avant.json) | **3** |
 | Nouvelles dans la branche `tache3-vulns` : [`semgrep-nouveaux.json`](https://github.com/Rayyan-Oumlil/tika-tache3/blob/tache3-vulns/docs-tache3/semgrep-nouveaux.json) | **7** |
 | Total après modifications | 10 |
 
