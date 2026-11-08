@@ -1,0 +1,26 @@
+# IFT3913 tâche 3 : action réutilisable qui rickroll quand un test échoue.
+name: rickroll
+description: Annonce l'échec des tests sur le ton de Rick Astley (annotation, journal et résumé du job)
+inputs:
+  message:
+    description: Message ajouté devant les paroles
+    default: Un test a échoué.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        MESSAGE: ${{ inputs.message }}
+      run: |
+        echo "::error title=Never gonna give you up::$MESSAGE Never gonna let you down. https://youtu.be/dQw4w9WgXcQ"
+        {
+          echo "## 🎵 $MESSAGE"
+          echo
+          echo "> Never gonna give you up, never gonna let you down,"
+          echo "> never gonna run around and desert you."
+          echo "> Never gonna make you cry, never gonna say goodbye,"
+          echo "> never gonna tell a lie and hurt you."
+          echo
+          echo "👉 [Regarder le clip pour comprendre ce qui vient de se passer](https://youtu.be/dQw4w9WgXcQ)"
+        } >> "$GITHUB_STEP_SUMMARY"
+        echo "Never gonna give you up / Never gonna let you down / Never gonna run around and desert you"
