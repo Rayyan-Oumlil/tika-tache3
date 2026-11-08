@@ -1,4 +1,4 @@
-> **IFT3913 — Tâche 3** : la documentation (workflow Semgrep, 7 vulnérabilités, rickroll) est dans [`docs-tache3/README.md`](docs-tache3/README.md). Les vulnérabilités sont dans la PR [#22](https://github.com/Rayyan-Oumlil/tika-tache3/pull/22) (branche [`tache3-vulns`](https://github.com/Rayyan-Oumlil/tika-tache3/tree/tache3-vulns)), volontairement non fusionnée.
+> **IFT3913 — Tâche 3** : la documentation (workflow Semgrep, 7 vulnérabilités, rickroll) est dans [`docs-tache3/README.md`](docs-tache3/README.md). Les vulnérabilités sont dans la PR [#24](https://github.com/Rayyan-Oumlil/tika-tache3/pull/24) (branche [`tache3-vulns`](https://github.com/Rayyan-Oumlil/tika-tache3/tree/tache3-vulns)), volontairement non fusionnée.
 
 # IFT3913 — Tâche 2 : génération de tests par LLM et analyse de mutation sur Apache Tika
 

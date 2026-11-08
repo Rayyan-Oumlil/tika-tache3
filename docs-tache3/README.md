@@ -9,12 +9,12 @@ Dépôt : https://github.com/Rayyan-Oumlil/tika-tache3 (Apache Tika, état du fo
 
 | Livrable | Où le voir |
 |---|---|
-| Workflow Semgrep bloquant | [`.github/workflows/tache3-semgrep.yml`](../.github/workflows/tache3-semgrep.yml) |
-| Vert sans vulnérabilité | PR [#1](https://github.com/Rayyan-Oumlil/tika-tache3/pull/1), run [42454154889](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42454154889) |
-| Rouge avec 7 vulnérabilités | PR [#22](https://github.com/Rayyan-Oumlil/tika-tache3/pull/22), run [42456290108](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42456290108) |
-| Rickroll | PR [#23](https://github.com/Rayyan-Oumlil/tika-tache3/pull/23), run [42454438674](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42454438674) |
+| Workflow Semgrep bloquant | [`.github/workflows/main-jdk17-build.yml` (job `semgrep`)](../.github/workflows/main-jdk17-build.yml) |
+| Vert sans vulnérabilité | push sur `main`, job `semgrep` du run [42512945880](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42512945880) |
+| Rouge avec 7 vulnérabilités | PR [#24](https://github.com/Rayyan-Oumlil/tika-tache3/pull/24), run [42515880138](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515880138) |
+| Rickroll | PR [#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25), run [42515884832](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884832) |
 
-Les PR #22 et #23 restent **ouvertes volontairement** : on ne les fusionne pas, sinon `main` contiendrait des vulnérabilités et un test en échec.
+Les PR #24 et #25 restent **ouvertes volontairement** : on ne les fusionne pas, sinon `main` contiendrait des vulnérabilités et un test en échec.
 
 ---
 
@@ -42,9 +42,9 @@ Le build échoue si un commit introduit une **nouvelle** vulnérabilité détect
 
 | Cas | Attendu | Observé |
 |---|---|---|
-| PR sans vulnérabilité ([#1](https://github.com/Rayyan-Oumlil/tika-tache3/pull/1)) | job vert | ✅ [42454154889](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42454154889) |
-| PR avec 7 vulnérabilités ([#22](https://github.com/Rayyan-Oumlil/tika-tache3/pull/22)) | job rouge, 7 trouvailles | ❌ [42456290108](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42456290108) : `Findings: 7 (7 blocking)`, comparées à la base `4e00267` |
-| PR avec un test en échec mais sans vulnérabilité ([#23](https://github.com/Rayyan-Oumlil/tika-tache3/pull/23)) | Semgrep vert | ✅ [42454438683](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42454438683) |
+| Code sans vulnérabilité (push sur `main`) | job vert | ✅ job `semgrep` du run [42512945880](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42512945880) |
+| PR avec 7 vulnérabilités ([#24](https://github.com/Rayyan-Oumlil/tika-tache3/pull/24)) | job rouge, 7 trouvailles | ❌ [42515880138](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515880138) : `Findings: 7 (7 blocking)`, comparées à la base `42b770b` |
+| PR avec un test en échec mais sans vulnérabilité ([#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25)) | Semgrep vert | ✅ [42515884837](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884837) |
 
 Avant d'utiliser le CI, la même commande a été exécutée en local avec l'image Docker `semgrep/semgrep` : 4 trouvailles sur 7 au premier essai. Les 3 manquantes venaient de noms de classes écrits en entier (`java.sql.Statement`…) au lieu d'imports : les règles Semgrep reconnaissent les types importés. Corrigé, puis revalidé.
 
@@ -53,6 +53,7 @@ Avant d'utiliser le CI, la même commande a été exécutée en local avec l'ima
 - Le scan ne regarde que `tika-core/src/main`. Les autres modules ne sont pas protégés.
 - Semgrep est une analyse statique par motifs : il ne prouve pas qu'une vulnérabilité est exploitable.
 - Si on déplace du code existant déjà signalé, Semgrep peut le compter comme nouveau.
+- Le job `semgrep` est indépendant du job `build (17)` du même workflow. Ce dernier (build Maven complet d'Apache Tika) échoue dans `tika-pipes-s3-integration-tests`, un module sans lien avec la tâche 3, et échouait déjà sur le fork avant nos modifications. Le verdict à lire est celui du job `semgrep`.
 
 ---
 
@@ -80,7 +81,7 @@ Aucune de ces 3 n'apparaît dans le rapport des nouvelles trouvailles.
 
 ## 3. Les 7 vulnérabilités introduites
 
-Chaque vulnérabilité est une méthode ajoutée dans un fichier existant de `tika-core`, dans la branche [`tache3-vulns`](https://github.com/Rayyan-Oumlil/tika-tache3/tree/tache3-vulns) (PR #22). Les 7 types correspondent à **7 CWE différents**.
+Chaque vulnérabilité est une méthode ajoutée dans un fichier existant de `tika-core`, dans la branche [`tache3-vulns`](https://github.com/Rayyan-Oumlil/tika-tache3/tree/tache3-vulns) (PR #24). Les 7 types correspondent à **7 CWE différents**.
 
 | # | Type (CWE) | Fichier : ligne | Règle Semgrep | Sévérité |
 |---|---|---|---|---|
@@ -118,7 +119,7 @@ Chaque vulnérabilité est une méthode ajoutée dans un fichier existant de `ti
 
 - **Action réutilisable** : [`.github/actions/rickroll/action.yml`](../.github/actions/rickroll/action.yml), écrite par nous (pas d'action tierce). Elle affiche une annotation d'erreur « Never gonna give you up », les paroles et le lien du clip dans le résumé du job.
 - **Branchement** : [`tache3-tests-rickroll.yml`](../.github/workflows/tache3-tests-rickroll.yml) lance les tests de `tika-core` ; l'étape rickroll a `if: failure()`, donc elle ne s'exécute que si une étape précédente a échoué.
-- **Preuve** : sur la PR [#23](https://github.com/Rayyan-Oumlil/tika-tache3/pull/23) un test est volontairement en échec ([`RickrollDemoTest`](https://github.com/Rayyan-Oumlil/tika-tache3/blob/tache3-rickroll-demo/tika-core/src/test/java/org/apache/tika/utils/RickrollDemoTest.java)). Dans le run [42454438674](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42454438674), « Tests de tika-core » est en échec et « Rickroll » est en succès. Sur les PR où les tests passent, l'étape est ignorée.
+- **Preuve** : sur la PR [#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25) un test est volontairement en échec ([`RickrollDemoTest`](https://github.com/Rayyan-Oumlil/tika-tache3/blob/tache3-rickroll-demo/tika-core/src/test/java/org/apache/tika/utils/RickrollDemoTest.java)). Dans le run [42515884832](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884832), « Tests de tika-core » est en échec et « Rickroll » est en succès. Sur les PR où les tests passent, l'étape est ignorée.
 - **Note** : l'énoncé parle des tests de *graphhopper* ; notre cas d'étude est Tika, donc le rickroll est branché sur les tests de Tika.
 
 ---
