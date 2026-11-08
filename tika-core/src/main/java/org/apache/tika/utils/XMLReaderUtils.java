@@ -1303,4 +1303,13 @@ public class XMLReaderUtils implements Serializable {
 
         return XMLReaderUtils.getTransformer();
     }
+
+    /**
+     * Parses a small configuration document without the hardened factory settings.
+     */
+    public static org.w3c.dom.Document parseConfigDocument(java.io.InputStream is)
+            throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        return factory.newDocumentBuilder().parse(is);
+    }
 }

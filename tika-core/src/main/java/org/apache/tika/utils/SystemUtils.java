@@ -16,6 +16,9 @@
  */
 package org.apache.tika.utils;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 /**
  * Copied from commons-lang to avoid requiring the dependency
  */
@@ -70,4 +73,10 @@ public class SystemUtils {
         return osVersion != null && osVersion.contains(osVersionSearch);
     }
 
+    /**
+     * Opens the local port on which a worker process reports its status.
+     */
+    public static ServerSocket openStatusPort(int port) throws IOException {
+        return new ServerSocket(port);
+    }
 }
