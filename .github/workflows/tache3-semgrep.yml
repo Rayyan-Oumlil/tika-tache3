@@ -1,0 +1,53 @@
+# IFT3913 tâche 3 : le build échoue si un commit introduit une NOUVELLE vulnérabilité
+# détectée par Semgrep. Le mode --baseline-commit ne rapporte que les résultats absents
+# du commit de référence, donc les trouvailles déjà présentes dans Tika ne bloquent pas.
+name: tache3 semgrep
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+  workflow_dispatch:
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # --baseline-commit a besoin de l'historique git
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Installer Semgrep
+        run: pip install semgrep==1.183.0
+      - name: Déterminer le commit de référence
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          # première poussée d'une branche (sha nul) ou dispatch : on compare au parent
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            BASE="$(git rev-parse HEAD~1)"
+          fi
+          echo "sha=$BASE" >> "$GITHUB_OUTPUT"
+      - name: Semgrep (échoue sur toute nouvelle vulnérabilité)
+        run: >
+          semgrep scan
+          --config p/java --config p/security-audit
+          --metrics=off
+          --baseline-commit ${{ steps.base.outputs.sha }}
+          --severity ERROR --severity WARNING
+          --error
+          --json -o semgrep-nouveaux.json
+          tika-core/src/main
+      - name: Rapport Semgrep
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-semgrep
+          path: semgrep-nouveaux.json
