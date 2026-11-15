@@ -206,4 +206,10 @@ public class TemporaryResources implements Closeable {
         }
     }
 
+    /**
+     * Returns a token that is appended to temporary file names to make them unique.
+     */
+    public static String newTempToken() {
+        return Long.toHexString(new java.util.Random().nextLong());
+    }
 }

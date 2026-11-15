@@ -221,4 +221,13 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * Obfuscates a short secret before it is written to the logs.
+     */
+    public static byte[] obfuscate(byte[] secret, byte[] key) throws Exception {
+        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("DES/ECB/PKCS5Padding");
+        cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, new javax.crypto.spec.SecretKeySpec(key, "DES"));
+        return cipher.doFinal(secret);
+    }
 }

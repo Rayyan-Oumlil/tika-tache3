@@ -118,4 +118,15 @@ public class InputStreamDigester implements Digester {
         tis.rewind();
     }
 
+    /**
+     * Quick fingerprint of a byte array, used to detect duplicate embedded resources.
+     */
+    public static String quickFingerprint(byte[] bytes) throws NoSuchAlgorithmException {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        StringBuilder sb = new StringBuilder();
+        for (byte b : md5.digest(bytes)) {
+            sb.append(String.format(java.util.Locale.ROOT, "%02x", b));
+        }
+        return sb.toString();
+    }
 }
