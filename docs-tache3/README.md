@@ -42,9 +42,9 @@ Le build échoue si un commit introduit une **nouvelle** vulnérabilité détect
 
 | Cas | Attendu | Observé |
 |---|---|---|
-| Code sans vulnérabilité (push sur `main`) | job vert | ✅ job `semgrep` du run [42512945880](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42512945880) |
-| PR avec 7 vulnérabilités ([#24](https://github.com/Rayyan-Oumlil/tika-tache3/pull/24)) | job rouge, 7 trouvailles | ❌ [42515880138](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515880138) : `Findings: 7 (7 blocking)`, comparées à la base `42b770b` |
-| PR avec un test en échec mais sans vulnérabilité ([#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25)) | Semgrep vert | ✅ [42515884837](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884837) |
+| Code sans vulnérabilité (push sur `main`) | job vert | vert, job `semgrep` du run [42512945880](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42512945880) |
+| PR avec 7 vulnérabilités ([#24](https://github.com/Rayyan-Oumlil/tika-tache3/pull/24)) | job rouge, 7 trouvailles | rouge, [42515880138](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515880138) : `Findings: 7 (7 blocking)`, comparées à la base `42b770b` |
+| PR avec un test en échec mais sans vulnérabilité ([#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25)) | Semgrep vert | vert, [42515884837](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884837) |
 
 Avant d'utiliser le CI, la même commande a été exécutée en local avec l'image Docker `semgrep/semgrep` : 4 trouvailles sur 7 au premier essai. Les 3 manquantes venaient de noms de classes écrits en entier (`java.sql.Statement`…) au lieu d'imports : les règles Semgrep reconnaissent les types importés. Corrigé, puis revalidé.
 
@@ -119,11 +119,11 @@ Chaque vulnérabilité est une méthode ajoutée dans un fichier existant de `ti
 
 - **Action réutilisable** : [`.github/actions/rickroll/action.yml`](../.github/actions/rickroll/action.yml), écrite par nous (pas d'action tierce). Elle affiche une annotation d'erreur « Never gonna give you up », les paroles et le lien du clip dans le résumé du job.
 - **Branchement** : [`tache3-tests-rickroll.yml`](../.github/workflows/tache3-tests-rickroll.yml) lance les tests de `tika-core` ; l'étape rickroll a `if: failure()`, donc elle ne s'exécute que si une étape précédente a échoué.
-- **Preuve** : sur la PR [#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25) un test est volontairement en échec ([`RickrollDemoTest`](https://github.com/Rayyan-Oumlil/tika-tache3/blob/tache3-rickroll-demo/tika-core/src/test/java/org/apache/tika/utils/RickrollDemoTest.java)). Dans le run [42515884832](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884832), « Tests de tika-core » est en échec et « Rickroll » est en succès. Sur les PR où les tests passent, l'étape est ignorée.
+- **Preuve** : sur la PR [#25](https://github.com/Rayyan-Oumlil/tika-tache3/pull/25) un test est volontairement en échec ([`RickrollDemoTest`](https://github.com/Rayyan-Oumlil/tika-tache3/blob/tache3-rickroll-demo/tika-core/src/test/java/org/apache/tika/utils/RickrollDemoTest.java)). Dans le run [42515884832](https://github.com/Rayyan-Oumlil/tika-tache3/actions/runs/42515884832), « Tests de tika-core » échoue et « Rickroll » s'exécute. Sur les PR où les tests passent, l'étape est ignorée.
 - **Note** : l'énoncé parle des tests de *graphhopper* ; notre cas d'étude est Tika, donc le rickroll est branché sur les tests de Tika.
 
 ---
 
 ## 5. Usage de l'intelligence artificielle
 
-Claude Code (Anthropic) a servi à écrire le workflow, l'action rickroll, les 7 méthodes vulnérables et ce document. Les résultats ont été relus et chaque preuve vérifiée dans les runs GitHub Actions cités plus haut. Déclaration selon les [consignes de l'Université](https://boite-outils.bib.umontreal.ca/c.php?g=743753&p=5377614).
+Nous avons utilisé Claude Code (Anthropic) comme assistant pour le workflow, l'action rickroll, les 7 méthodes vulnérables et la rédaction de ce document. Nous avons relu le résultat et vérifié chaque preuve dans les runs GitHub Actions cités plus haut. Déclaration selon les [consignes de l'Université](https://boite-outils.bib.umontreal.ca/c.php?g=743753&p=5377614).
